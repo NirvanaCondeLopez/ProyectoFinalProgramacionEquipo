@@ -1,0 +1,6 @@
+URL = 'https://datosmacro.expansion.com/otros/coronavirus-vacuna/mexico'
+CSV_FILE_PATH= 'datos_covid_mexico.csv'
+HOSTB='localhost'
+USERB='root'
+PASSWORDB='1986'
+DATABASEB='ProyectoFinal'
