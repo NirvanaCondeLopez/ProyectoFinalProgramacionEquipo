@@ -52,3 +52,12 @@ def scrape_data(URL):
     except Exception as e:
         print(f'Error: {e}')
         return None
+
+def guardar_datos_en_csv(df, CSV_FILE_PATH):
+    try:
+        df.to_csv(CSV_FILE_PATH, index=False)
+        print(f'Datos guardados en {CSV_FILE_PATH}')
+    except Exception as e:
+        print(f'Error al guardar en CSV: {e}')
+
+
