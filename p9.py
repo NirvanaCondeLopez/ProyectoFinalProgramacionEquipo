@@ -101,5 +101,39 @@ class MySQLConnect:
         if self._connection:
             self._connection.close()
             self._connection = None
+            
+    def insert_vacunas(self, fecha, dosis_administradas):
+        try:
+            connection = self.conectar()
+            cursor = connection.cursor()
 
+            cursor.execute(
+                """INSERT INTO Vacunas(Fecha, Dosis_administradas)
+                VALUES (%s, %s)""",
+                (fecha, dosis_administradas)
+            )
+            connection.commit()
+        except mysql.connector.Error as err:
+            print(f"Error al insertar datos en Vacunas: {err}")
+        finally:
+            if cursor:
+                cursor.close()
+            self.desconectar()
 
+    def insert_personas_vacunadas(self, vacuna_id,fecha, personas_vacunadas):
+        try:
+            connection = self.conectar()
+            cursor = connection.cursor()
+
+            cursor.execute(
+                """INSERT INTO PersonasVacunadas(Vacuna_id,Fecha, Personas_vacunadas)
+                VALUES (%s, %s,%s)""",
+                (vacuna_id,fecha, personas_vacunadas)
+            )
+            connection.commit()
+        except mysql.connector.Error as err:
+            print(f"Error al insertar datos en PersonasVacunadas: {err}")
+        finally:
+            if cursor:
+                cursor.close()
+            self.desconectar()
