@@ -60,4 +60,46 @@ def guardar_datos_en_csv(df, CSV_FILE_PATH):
     except Exception as e:
         print(f'Error al guardar en CSV: {e}')
 
+class MySQLConnect:
+    def __init__(self, host, user, password, database):
+        self._host = host
+        self._user = user
+        self._password = password
+        self._database = database
+        self._connection = None
+
+    @property
+    def host(self):
+        return self._host
+
+    @property
+    def user(self):
+        return self._user
+
+    @property
+    def password(self):
+        return self._password
+
+    @property
+    def database(self):
+        return self._database
+
+    def conectar(self):
+        try:
+            self._connection = mysql.connector.connect(
+                host=self._host,
+                user=self._user,
+                password=self._password,
+                database=self._database
+            )
+            return self._connection
+        except mysql.connector.Error as err:
+            print(f"Error al conectar a la base de datos: {err}")
+            return None
+
+    def desconectar(self):
+        if self._connection:
+            self._connection.close()
+            self._connection = None
+
 
