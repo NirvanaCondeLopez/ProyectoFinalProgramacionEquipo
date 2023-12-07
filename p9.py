@@ -189,5 +189,31 @@ def get_data_from_database(db_connection):
     except mysql.connector.Error as e:
         print(f"Error al obtener datos de la base de datos: {e}")
         return None, None, None
+        
+def procesar_datos(df, db_connection):
+    try:
+        df_dosis = df[['Fecha', 'Dosis administradas']].copy()
+        df_personas = df[['Fecha', 'Personas vacunadas']].copy()
+        df_completamente = df[['Fecha', 'Completamente vacunadas', 'Porcentaje completamente vacunadas']].copy()
 
+        for index, row in df_dosis.iterrows():
+            fecha = row['Fecha']
+            dosis_administradas = row['Dosis administradas']
+            db_connection.insert_vacunas(fecha, dosis_administradas)
+
+        for index, row in df_personas.iterrows():
+            vacuna_id = index + 1
+            fecha = row['Fecha']
+            personas_vacunadas = row['Personas vacunadas']
+            db_connection.insert_personas_vacunadas(vacuna_id, fecha, personas_vacunadas)
+
+        for index, row in df_completamente.iterrows():
+            persona_vacunada_id = index + 1
+            fecha = row['Fecha']
+            complet_vacunadas = row['Completamente vacunadas']
+            porcentaje_completas = row['Porcentaje completamente vacunadas']
+            db_connection.insert_completamente_vacunadas(persona_vacunada_id, fecha, complet_vacunadas, porcentaje_completas)
+
+    except Exception as e:
+        print(f'Error al procesar datos: {e}')
 
