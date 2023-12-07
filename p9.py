@@ -157,3 +157,37 @@ class MySQLConnect:
             self.desconectar()
 
 db_connection = MySQLConnect(HOSTB, USERB, PASSWORDB, DATABASEB)
+
+def get_data_from_database(db_connection):
+    try:
+        connection = db_connection.conectar()
+        cursor = connection.cursor()
+
+
+        query_vacunas = "SELECT Fecha, Dosis_administradas FROM Vacunas"
+        cursor.execute(query_vacunas)
+        data_vacunas = cursor.fetchall()  # Obtiene todos los datos de Vacunas
+        df_dosis = pd.DataFrame(data_vacunas, columns=['Fecha', 'Dosis_administradas'])
+
+
+        query_personas = "SELECT Fecha, Personas_vacunadas FROM PersonasVacunadas"
+        cursor.execute(query_personas)
+        data_personas = cursor.fetchall()  # Obtiene todos los datos de PersonasVacunadas
+        df_personas = pd.DataFrame(data_personas, columns=['Fecha', 'Personas_vacunadas'])
+
+
+        query_completamente = "SELECT Fecha, Completamente_vacunadas, Porcentaje_completamente_vacunadas FROM CompletamenteVacunadas"
+        cursor.execute(query_completamente)
+        data_completamente = cursor.fetchall()
+        df_completamente = pd.DataFrame(data_completamente, columns=['Fecha', 'Completamente_vacunadas', 'Porcentaje_completamente_vacunadas'])
+
+        cursor.close()
+        connection.close()
+
+        return df_dosis, df_personas, df_completamente
+
+    except mysql.connector.Error as e:
+        print(f"Error al obtener datos de la base de datos: {e}")
+        return None, None, None
+
+
