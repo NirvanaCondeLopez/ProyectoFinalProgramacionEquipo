@@ -137,3 +137,23 @@ class MySQLConnect:
             if cursor:
                 cursor.close()
             self.desconectar()
+
+    def insert_completamente_vacunadas(self, persona_vacunada_id,fecha, complet_vacunadas, porcentaje_completas):
+        try:
+            connection = self.conectar()
+            cursor = connection.cursor()
+
+            cursor.execute(
+                """INSERT INTO CompletamenteVacunadas(PersonaVacunada_id,Fecha, Completamente_vacunadas, Porcentaje_completamente_vacunadas)
+                VALUES (%s, %s, %s,%s)""",
+                (persona_vacunada_id,fecha, complet_vacunadas, porcentaje_completas)
+            )
+            connection.commit()
+        except mysql.connector.Error as err:
+            print(f"Error al insertar datos en CompletamenteVacunadas: {err}")
+        finally:
+            if cursor:
+                cursor.close()
+            self.desconectar()
+
+db_connection = MySQLConnect(HOSTB, USERB, PASSWORDB, DATABASEB)
