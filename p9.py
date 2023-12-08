@@ -412,3 +412,26 @@ app2.layout = dbc.Container(
         ),
     ]
 )
+
+@app2.callback(
+    [Output('graph-completamente-vacunadas2', 'figure'),
+     Output('graph-porcentaje-completamente-vacunadas2', 'figure'),
+     Output('kpi-completamente-vacunadas2', 'children')],
+    [Input('month-dropdown2', 'value')]
+)
+def update_graph2(selected_month):
+    df_dosis, df_personas, df_completamente = get_data_from_database(db_connection)
+    df_completamente['Fecha'] = pd.to_datetime(df_completamente['Fecha'])
+
+    filtered_df = df_completamente[df_completamente['Fecha'].dt.month_name() == selected_month]
+
+    fig_completamente_vacunadas = px.bar(filtered_df, x='Fecha', y='Completamente_vacunadas', title='Completamente Vacunadas')
+    fig_porcentaje_completamente_vacunadas = px.line(filtered_df, x='Fecha', y='Porcentaje_completamente_vacunadas', title='Porcentaje Completamente Vacunadas')
+
+    max_vacunadas = filtered_df['Completamente_vacunadas'].max()
+    kpi_completamente_vacunadas = html.Div([
+        html.H3("KPI - Máximo de Personas Vacunadas", style={'marginBottom': '10px'}),
+        html.H2(f"{max_vacunadas:,}", style={'fontSize': '48px', 'fontWeight': 'bold', 'marginBottom': '0'})
+    ], style=kpi_style_dashboard2)
+
+    return fig_completamente_vacunadas, fig_porcentaje_completamente_vacunadas, kpi_completamente_vacunadas
