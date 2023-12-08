@@ -317,3 +317,26 @@ app1.layout = dbc.Container(
         ]),
     ]
 )
+
+
+covid_info_links = [
+    {'title': 'Vacunación COVID-19 en México-Gobierno de Mexico', 'link': 'https://coronavirus.gob.mx/'},
+    {'title': 'Estadísticas Globales de COVID-19-Conacyt', 'link': 'https://datos.covid-19.conacyt.mx/'},
+    {'title': 'Información de la OMS sobre COVID-19-Sinave', 'link': 'https://covid19.sinave.gob.mx/'},
+]
+def generate_info_cards(links):
+    cards = []
+    for link in links:
+        card = dbc.Card(
+            dbc.CardBody(
+                [
+                    html.H4(link['title'], className="card-title"),
+                    html.A("Más información", href=link['link'], target='_blank', className="card-link")
+                ]
+            ),
+            className="mb-3",
+            style={'backgroundColor': '#f8f9fa'}
+        )
+        cards.append(card)
+    return cards
+
