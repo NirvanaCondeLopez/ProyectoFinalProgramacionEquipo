@@ -340,3 +340,75 @@ def generate_info_cards(links):
         cards.append(card)
     return cards
 
+kpi_style_dashboard2 = {
+    'backgroundColor': '#009688',
+    'color': 'white',
+    'padding': '20px',
+    'borderRadius': '10px',
+    'textAlign': 'center',
+    'boxShadow': '0 4px 8px rgba(0,0,0,0.1)'
+}
+
+text_style = {
+    'fontSize': '18px',
+    'fontWeight': 'bold',
+    'marginBottom': '10px',
+    'textAlign': 'justify',
+    'color': '#333'
+}
+app2 = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP], url_base_pathname='/dashboard2/')
+app2.layout = dbc.Container(
+    style={'fontFamily': 'Arial, sans-serif', 'backgroundColor': '#f0f0f0', 'padding': '20px'},
+    children=[
+        html.Div(
+            style={'backgroundColor': '#343a40', 'color': 'white', 'padding': '20px', 'marginBottom': '20px'},
+            children=[
+                html.H1("Dashboard de Vacunación COVID-19 en México", style={'textAlign': 'center'}),
+                html.P("Visualización de datos sobre la vacunación contra COVID-19 en México.", style={'textAlign': 'center'}),
+            ]
+        ),
+        html.Div(
+            style={'backgroundColor': 'white', 'padding': '20px', 'borderRadius': '10px',
+                   'boxShadow': '0 4px 8px rgba(0,0,0,0.1)'},
+            children=[
+                dbc.Row([
+                    dbc.Col(
+                        generate_info_cards(covid_info_links),
+                        width=8
+                    ),
+                    dbc.Col([
+                        html.Label("Seleccionar Mes:", style={'fontSize': '18px'}),
+                        dcc.Dropdown(
+                            id='month-dropdown2',
+                            options=[{'label': month, 'value': month} for month in months],
+                            value=months[0],
+                            style={'fontSize': '16px', 'color': '#333', 'borderRadius': '4px', 'padding': '8px'}
+                        ),
+                        html.P("La vacunación contra la COVID-19 en México es la estrategia nacional iniciada el 24 de diciembre de 2020 para vacunar contra la COVID-19 a la población mayor de 15 años que así lo desee para reducir el riesgo de hospitalización y defunción, en el marco de un esfuerzo mundial para combatir la pandemia de COVID-19.", style=text_style),
+                        html.P("", style={'fontSize': '18px', 'fontWeight': 'bold', 'marginBottom': '10px'}),
+                    ], width=4),
+                    dbc.Col([
+                        dcc.Graph(
+                            id='graph-completamente-vacunadas2',
+                            style={'height': '50vh'}
+                        ),
+                        dcc.Graph(
+                            id='graph-porcentaje-completamente-vacunadas2',
+                            style={'height': '50vh'}
+                        ),
+                    ], width=8),
+                ]),
+
+                html.Div(
+                    id='kpi-completamente-vacunadas2',
+                    style=kpi_style_dashboard2,
+                    children=[
+                        html.H3("KPI - Máximo de Personas Vacunadas", style={'marginBottom': '10px'}),
+                        html.H2("789,302", style={'fontSize': '48px', 'fontWeight': 'bold', 'marginBottom': '0'}),
+                        html.I(className="fas fa-user-friends fa-2x", style={'marginBottom': '10px'}),
+                    ]
+                )
+            ]
+        ),
+    ]
+)
