@@ -217,3 +217,103 @@ def procesar_datos(df, db_connection):
     except Exception as e:
         print(f'Error al procesar datos: {e}')
 
+
+df_dosis, df_personas, df_completamente = get_data_from_database(db_connection)
+Integrantes = ["Nirvana Conde Lopez", "Maria Jose Rojas Sañudo", "Laura Vega Hernandez", "Jamie Mota Parra", "Francisco Lagunes Lopez"]
+months = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+]
+months = list(calendar.month_name)[1:]
+
+
+kpi_style_dashboard1 = {
+    'backgroundColor': '#343a40',
+    'color': 'white',
+    'padding': '20px',
+    'borderRadius': '10px',
+    'textAlign': 'center'
+}
+app1 = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP], url_base_pathname='/dashboard1/')
+app1.layout = dbc.Container(
+    style={'fontFamily': 'Arial, sans-serif', 'backgroundColor': '#007bff', 'padding': '20px'},
+    children=[
+        html.Div(
+            style={'backgroundColor': '#343a40', 'color': 'white', 'padding': '20px', 'marginBottom': '20px'},
+            children=[
+                html.H1("Dashboard de Vacunación COVID-19 en México", style={'textAlign': 'center'}),
+                html.P("Visualización de datos sobre la vacunación contra COVID-19 en México.", style={'textAlign': 'center'}),
+            ]
+        ),
+        html.Div(
+            style={'backgroundColor': 'white', 'padding': '20px', 'border': '1px solid #ddd', 'borderRadius': '10px',
+                   'boxShadow': '0 4px 8px rgba(0,0,0,0.1)'},
+            children=[
+                html.H3("Equipo de Desarrollo:", style={'color': '#333', 'marginBottom': '10px'}),
+                html.Ol(
+                    [html.Li(member, style={'fontSize': '16px', 'marginBottom': '8px', 'lineHeight': '1.6'}) for member in Integrantes]
+                ),
+            ]
+        ),
+        html.Div([
+            html.P("La vacunación es una forma sencilla, inocua y eficaz de protegernos contra enfermedades dañinas antes de entrar en contacto con ellas. Las vacunas activan las defensas naturales del organismo para que aprendan a resistir a infecciones específicas, y fortalecen el sistema inmunitario.", style={'fontSize': '18px', 'fontWeight': 'bold', 'marginBottom': '10px','textAlign': 'center'}),
+            dcc.Graph(
+                id='graph-dosis-administradas1',
+                figure={
+                    'data': [
+                        go.Scatter(
+                            x=df_dosis['Fecha'].tolist(),
+                            y=df_dosis['Dosis_administradas'].tolist(),
+                            mode='lines+markers',
+                            name='Dosis Administradas'
+                        )
+                    ],
+                    'layout': {
+                        'title': 'Dosis Administradas',
+                        'xaxis': {'title': 'Fecha'},
+                        'yaxis': {'title': 'Dosis administradas'},
+                        'hovermode': 'closest'
+                    }
+                }
+            ),
+            html.Div(
+                style=kpi_style_dashboard1,
+                children=[
+                    html.H3("Promedio de dosis administradas-KPI", style={'marginBottom': '10px'}),
+                    daq.Gauge(
+                        id='my-gauge1',
+                        label='Dosis administradas',
+                        value=df_dosis['Dosis_administradas'].mean(),
+                        max=df_dosis['Dosis_administradas'].max(),
+                        min=df_dosis['Dosis_administradas'].min(),
+                        showCurrentValue=True,
+                        units="Dosis"
+                    ),
+                    html.H2(f"{df_dosis['Dosis_administradas'].mean():.2f}",
+                            style={'fontSize': '48px', 'fontWeight': 'bold', 'marginBottom': '0'})
+                ]
+            ),
+            html.Div([
+                dcc.Graph(
+                    id='bar-chart1',
+                    figure=px.bar(df_dosis.head(10), x='Fecha', y='Dosis_administradas', title='Últimas 10 Fechas - Dosis Administradas'),
+                    style={'height': '400px'}
+                )
+            ]),
+            dbc.Row([
+                dbc.Col([
+                    dbc.Card(
+                        dbc.CardBody([
+                            html.H4("Maximo de Dosis administradas", className="card-title"),
+                            html.P(df_dosis['Dosis_administradas'].max(), className="card-text",
+                                   style={'fontSize': '15px'}),
+                        ]),
+                        className="mb-3 text-center",
+                        color='Blue',
+                        inverse=True,
+                    ),
+                ], width=4),
+            ])
+        ]),
+    ]
+)
