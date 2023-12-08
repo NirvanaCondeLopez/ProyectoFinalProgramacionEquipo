@@ -435,3 +435,24 @@ def update_graph2(selected_month):
     ], style=kpi_style_dashboard2)
 
     return fig_completamente_vacunadas, fig_porcentaje_completamente_vacunadas, kpi_completamente_vacunadas
+
+def run_dash(app, port):
+    app.run_server(debug=True, port=port, use_reloader=False)
+
+def start_dash_servers():
+    t1 = threading.Thread(target=run_dash, args=(app1, 8051))
+    t2 = threading.Thread(target=run_dash, args=(app2, 8052))
+
+    t1.start()
+    t2.start()
+
+if _name_ == '_main_':
+    df = scrape_data(URL)
+    guardar_datos_en_csv(df, CSV_FILE_PATH)
+
+    db_connection = MySQLConnect(host=HOSTB, user=USERB, password=PASSWORDB, database=DATABASEB)
+    procesar_datos(df, db_connection)
+
+    df_dosis, df_personas, df_completamente = get_data_from_database(db_connection)
+
+    start_dash_servers()
